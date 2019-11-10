@@ -30,9 +30,27 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
     animation = Tween<double>(
       begin: 0,
       end: 300,
-    ).animate(controller);
+    ).animate(controller)
+      ..addStatusListener(_onAnimationStatusChanged);
 
     controller.forward();
+  }
+
+  void _onAnimationStatusChanged(AnimationStatus status) {
+    switch (status) {
+      case AnimationStatus.completed:
+        print("----------------------------------------------------");
+        print("completed");
+        controller.reverse();
+        break;
+      case AnimationStatus.dismissed:
+        print("----------------------------------------------------");
+        print("dismissed");
+        controller.forward();
+        break;
+      default:
+      // no op
+    }
   }
 
   @override
@@ -67,8 +85,6 @@ class GrowTransition extends StatelessWidget {
             animation: animation,
             child: child,
             builder: (context, child) {
-              print("----------------------------------------------------");
-              print("animated_builder build");
               return Container(
                 height: animation.value,
                 width: animation.value,
