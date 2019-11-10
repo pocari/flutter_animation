@@ -26,16 +26,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
     print("init state");
     super.initState();
     controller =
-        AnimationController(duration: Duration(seconds: 2), vsync: this)
-          ..addListener(() {
-            print("----------------------------------------------------");
-            print("in lister");
-            setState(() {
-              print("----------------------------------------------------");
-              print("run setState");
-            });
-          });
-
+        AnimationController(duration: Duration(seconds: 2), vsync: this);
     animation = Tween<double>(
       begin: 0,
       end: 300,
@@ -53,7 +44,16 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   }
 
   @override
+  Widget build(BuildContext context) => AnimatedLogo(animation: animation);
+}
+
+class AnimatedLogo extends AnimatedWidget {
+  AnimatedLogo({Key key, Animation<double> animation})
+      : super(key: key, listenable: animation);
+
+  @override
   Widget build(BuildContext context) {
+    final Animation<double> animation = listenable;
     print("----------------------------------------------------");
     print("build");
     return Scaffold(
