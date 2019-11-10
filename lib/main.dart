@@ -18,7 +18,6 @@ class LogoApp extends StatefulWidget {
 
 class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   AnimationController controller;
-  Animation<double> animation;
 
   @override
   void initState() {
@@ -26,12 +25,8 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
     print("init state");
     super.initState();
     controller =
-        AnimationController(duration: Duration(seconds: 2), vsync: this);
-    animation = Tween<double>(
-      begin: 0,
-      end: 300,
-    ).animate(controller)
-      ..addStatusListener(_onAnimationStatusChanged);
+        AnimationController(duration: Duration(seconds: 2), vsync: this)
+          ..addStatusListener(_onAnimationStatusChanged);
 
     controller.forward();
   }
@@ -63,10 +58,13 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) =>
-      GrowTransition(animation: animation, child: LogoWidget());
+      GrowTransition(animation: controller, child: LogoWidget());
 }
 
 class GrowTransition extends StatelessWidget {
+  static final _opacityTween = Tween<double>(begin: 0.1, end: 1);
+  static final _sizeTween = Tween<double>(begin: 0, end: 300);
+
   final Widget child;
   final Animation<double> animation;
 
@@ -79,18 +77,24 @@ class GrowTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     print("----------------------------------------------------");
     print("build");
+
     return Scaffold(
       body: Center(
         child: AnimatedBuilder(
-            animation: animation,
-            child: child,
-            builder: (context, child) {
-              return Container(
-                height: animation.value,
-                width: animation.value,
-                child: child,
-              );
-            }),
+          animation: animation,
+          child: child,
+          builder: (context, child) {
+            print("opacity: ${_opacityTween.evaluate(animation)}");
+            print("size: ${_sizeTween.evaluate(animation)}");
+            return Opacity(
+                opacity: _opacityTween.evaluate(animation),
+                child: Container(
+                  height: _sizeTween.evaluate(animation),
+                  width: _sizeTween.evaluate(animation),
+                  child: child,
+                ));
+          },
+        ),
       ),
     );
   }
